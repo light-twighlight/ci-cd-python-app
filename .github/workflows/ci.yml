@@ -55,11 +55,13 @@ jobs:
       - name: Deploy to AWS EC2
         env:
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_IP: ${{ secrets.EC2_IP }}
         run: |
           IMAGE="ghcr.io/$GHCR_USERNAME/fastapi-ci:latest"
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_IP << EOF
+            echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin
             docker pull $IMAGE
             docker stop fastapi-ci || true
             docker rm fastapi-ci || true
