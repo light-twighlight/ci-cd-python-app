@@ -16,6 +16,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Debug GHCR username
+        run: |
+          echo "=============================="
+          if [ -z "${{ secrets.GHCR_USERNAME }}" ]; then
+            echo "GHCR_USERNAME is EMPTY"
+            exit 1
+          else
+            echo "GHCR_USERNAME is SET"
+          fi
+          echo "=============================="
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
