@@ -11,4 +11,3 @@ ci-cd-deploy/
 ├── README.md
 ├── requirments.txt
 ```
-
