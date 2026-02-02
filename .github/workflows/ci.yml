@@ -47,8 +47,22 @@ jobs:
             ghcr.io/${{ secrets.GHCR_USERNAME }}/fastapi-ci:latest
             ghcr.io/${{ secrets.GHCR_USERNAME }}/fastapi-ci:${{ github.sha }}
       
-      - name: Deploy to AWS EC2
+      - name: Prepare EC2 key
         run: |
-          echo "${{ secrets.EC2_KEY }}" > ec2-key.pem
+          echo "${{ secrets.EC2_KEY_B64 }}" | base64 --decode > ec2-key.pem
           chmod 400 ec2-key.pem
-          bash scripts/deploy.sh
+      
+      - name: Deploy to AWS EC2
+        env:
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_IP: ${{ secrets.EC2_IP }}
+        run: |
+          IMAGE="ghcr.io/$GHCR_USERNAME/fastapi-ci:latest"
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem $EC2_USER@$EC2_IP << EOF
+            docker pull $IMAGE
+            docker stop fastapi-ci || true
+            docker rm fastapi-ci || true
+            docker run -d --name fastapi-ci -p 8000:8000 $IMAGE
+          EOF
+
