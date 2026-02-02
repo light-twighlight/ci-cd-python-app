@@ -3,13 +3,12 @@ Simple FastAPI app with CI/CD pipeline using GitHub Actions and Docker
 
 ```
 ci-cd-deploy/
-├── app/
-│   Dockerfile
-│   docker-compose.yml
 ├── .github/workflows/
-│   └── deploy.yml
-├── scripts/
-│   └── deploy.sh
+│   └── ci.yml
+├── app/
+│   └── main.py
+├── Dockerfile
 ├── README.md
+├── requirments.txt
 ```
 
